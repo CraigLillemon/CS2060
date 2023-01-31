@@ -5,7 +5,22 @@
 // function main begins program execution 
 int main( void )
 {
+	//Initialize variable
+	int length = 0;
+	int width = 0;
+	int area = 0;
    printf( "Welcome to C!\n" );
+   //Length ask, and input
+   printf("Enter length\n");
+   scanf_s("%d", &length);
+   //Width ask and input
+   printf("Enter width\n");
+   scanf_s("%d", &width);
+   //Area calculation 
+   area = length * width;
+   printf_s("Length: %d Width: %d Area: %d", length, width, area);
+   double average = area / 2;
+
 } // end function main 
 
 
