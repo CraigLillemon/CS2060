@@ -6,21 +6,23 @@
 int main( void )
 {
 	//Initialize variable
-	int length = 0;
-	int width = 0;
-	int area = 0;
+	double length = 0;
+	double width = 0;
+	double area = 0;
    printf( "Welcome to C!\n" );
    //Length ask, and input
-   printf("Enter length\n");
-   scanf_s("%d", &length);
+   printf("%s", "Enter length\n");
+   scanf("%lf", &length);
    //Width ask and input
-   printf("Enter width\n");
-   scanf_s("%d", &width);
+   printf("%s", "Enter width\n");
+   scanf("%lf", &width);
    //Area calculation 
    area = length * width;
-   printf_s("Length: %d Width: %d Area: %d", length, width, area);
-   double average = area / 2;
-
+   printf("%s%.1f%s%.1f%s%.1f\n", "Length: ", length,  " Width : ", width,  " Area : ", area );
+   //calculate average difference 
+   double average = length / width;
+   //Print difference, up to the .1 decimal spot, should there be decimals 
+   printf("%s%.1f", "Average value is ", average);
 } // end function main 
 
 
