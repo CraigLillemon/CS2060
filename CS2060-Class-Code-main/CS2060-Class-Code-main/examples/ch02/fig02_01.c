@@ -18,6 +18,8 @@ int main( void )
    scanf("%lf", &width);
    //Area calculation 
    area = length * width;
+   //Simpler but unsecured below way to print
+   //printf("Length: %d Width: %d Area: %d", length, width, area);
    printf("%s%.1f%s%.1f%s%.1f\n", "Length: ", length,  " Width : ", width,  " Area : ", area );
    //calculate average difference 
    double average = length / width;
