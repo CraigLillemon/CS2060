@@ -25,7 +25,7 @@ int main()
         {
             printf("%s\n", "Enter number of hours the car was parked or enter -1 to quit");
             scanf("%lf", &response);
-            if (response > MAX_HOURS_ALLOWED || response < -1)
+            if (response > MAX_HOURS_ALLOWED || response <= 0)
             {
                 printf("%s%d\n", "Please enter a number between 0.1 - ", MAX_HOURS_ALLOWED);
             }
@@ -47,6 +47,7 @@ int main()
         //Rounds up to calculate a whole number
         if (tempHours != -1)
         {
+            car += 1;
             if (tempHours < response)
             {
                 tempHours = tempHours + 1;
@@ -64,10 +65,12 @@ int main()
             {
                 cost = MAX_CHARGE;
             }
+            printf("%s\n", "Car     Hours   Charge");
+            printf("%d  %.2lf   %.1lf\n", car, response, cost);
             totalCost += cost;
+            hourTotal += response;
         }
         printf("%.2lf\n", cost);
-        hourTotal += response;
         printf("%d\n", tempHours);
 
     } while (validEnd != true);
