@@ -8,6 +8,8 @@
 #define ADDITIONAL_HOURS_RATE 1.25
 #define MAX_HOURS_ALLOWED 24
 #define MAX_CHARGE 15
+#define MIN_HOURS_ALLOWED 0
+#define EXIT_CONDITION -1
 int main()
 {
     // initialize variables
@@ -25,26 +27,26 @@ int main()
         {
             printf("%s\n", "Enter number of hours the car was parked or enter -1 to quit");
             scanf("%lf", &response);
-            if (response == -1)
+            if (response == EXIT_CONDITION)
             {
                 hourLoop = true;
                 validEnd = true;
             }
-            else if (response > MAX_HOURS_ALLOWED || response <= 0)
+            else if (response > MAX_HOURS_ALLOWED || response <= MIN_HOURS_ALLOWED)
             {
-                printf("%s%d\n", "Please enter a number between 0.1 - ", MAX_HOURS_ALLOWED);
+                printf("%s%d%s%d\n", "Please enter a number between ", MIN_HOURS_ALLOWED, "-", MAX_HOURS_ALLOWED);
             }
-            else if (response < MAX_HOURS_ALLOWED && response >  0)
+            else if (response <= MAX_HOURS_ALLOWED && response > MIN_HOURS_ALLOWED)
             {
                 hourLoop = true;
             }
             
         }
         while (hourLoop != true);
+        tempHours = round(response);
         //Rounds up to calculate a whole number
-        if (tempHours != -1)
+        if (tempHours != EXIT_CONDITION)
         {
-            tempHours = round(response);
             car += 1;
             if (tempHours < response)
             {
@@ -63,8 +65,8 @@ int main()
             {
                 cost = MAX_CHARGE;
             }
-            printf("%s\n", "Car     Hours   Charge");
-            printf("%d  %.1lf   $%.2lf\n", car, response, cost);
+            printf("%s%9s%10s\n", "Car", "Hours", "Charge");
+            printf("%d  %6.1lf   %5s%-5.2lf\n", car, response, "$", cost);
             totalCost += cost;
             hourTotal += response;
             
@@ -72,11 +74,13 @@ int main()
 
     } 
     while (validEnd != true);
+    //Car total summary
     if (car > 0)
     {
-        printf("%s\n", "Total Car    Total Hours  Total Charge");
-        printf("%d  %.1lf   $%.2lf\n", car, hourTotal, totalCost);
+        printf("%s%20s%20s\n", "Total Cars", "Total Hours", "Total Charges");
+        printf("%d  %21.1lf   %14s%-14.2lf\n", car, hourTotal,"$", totalCost);
     }
+    //no car
     else
     {
         printf("%s\n", "There were no cars parked today");
