@@ -7,6 +7,7 @@
 *The code will repeat until the exit condition -1 is entered in, hours portion will be repeated until a valid input is entered,
 *When finished Code will display amount of the of cars, total hours, and total money earned if no cars parked it will display that no cars were parked
 *Charges $2.5 for up to three hours, and 1.25 for every hour after till a max charge of $15, a car cannot stay for more than 24 hours 
+*Ensure that cost, hours and such can be changed easily and maintainable 
 */
 #include <stdio.h>
 #include <math.h>
