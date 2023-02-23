@@ -13,12 +13,13 @@ void printArray(const int grades[][EXAMS], size_t pupils, size_t tests);
 // function main begins program execution
 int main(void)
 {
+    
    // initialize student grades for three students (rows)
    int studentGrades[STUDENTS][EXAMS] =  
       { { 77, 68, 86, 73 },
         { 96, 87, 89, 78 },
         { 70, 90, 86, 81 } };
-
+   enterGrades(studentGrades, STUDENTS, EXAMS);
    // output array studentGrades
    puts("The array is:");
    printArray(studentGrades, STUDENTS, EXAMS);
@@ -91,21 +92,34 @@ double average(const int setOfGrades[], size_t tests)
 // Print the array
 void printArray(const int grades[][EXAMS], size_t pupils, size_t tests)
 {
-   // output column heads
-   printf("%s", "                 [0]  [1]  [2]  [3]");
+    // output column heads
+    printf("%s", "                 [0]  [1]  [2]  [3]");
 
-   // output grades in tabular format
-   for (size_t i = 0; i < pupils; ++i) {
+    // output grades in tabular format
+    for (size_t i = 0; i < pupils; ++i) {
 
-      // output label for row
-      printf("\nstudentGrades[%u] ", i);
+        // output label for row
+        printf("\nstudentGrades[%u] ", i);
 
-      // output grades for one student
-      for (size_t j = 0; j < tests; ++j) {
-         printf("%-5d", grades[i][j]);
-      } 
-   } 
-} 
+        // output grades for one student
+        for (size_t j = 0; j < tests; ++j) {
+            printf("%-5d", grades[i][j]);
+        }
+    }
+}
+   int enterGrades(const int grades[][EXAMS], size_t pupils, size_t tests)
+{
+       for (size_t row = 0; row < pupils; row++)
+       {
+           for (size_t column = 0; column < tests; column++)
+           {
+               printf("Enter value table grades [%d] [%d]", row, column);
+               scanf("%d", &grades[row][column]);
+           }
+
+       }
+}
+
 
 /**************************************************************************
  * (C) Copyright 1992-2015 by Deitel & Associates, Inc. and               *
