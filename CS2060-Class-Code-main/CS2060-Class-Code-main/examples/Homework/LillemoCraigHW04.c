@@ -7,12 +7,14 @@
 #define CATEGORIES "1. Learning Activity 2. Homework 3. Project 4. Midterm 5. Final "
 const unsigned int MIN_GRADE = 0;
 const unsigned int MAX_GRADE = 105;
+//Gets a if >= 90
 const double  A_LETTER = 90;
+//Gets B if >= 80 while being less than A letter
 const double  B_LETTER = 80;
+//Repeats like above
 const double  C_LETTER = 70;
 const double  D_LETTER = 60;
 const double GRADE_CATEGORY_WEIGHT[] = { 0.1, 0.3, 0.3, 0.15, .15 };
-double gradeAverage[] = { 0,0,0,0,0 };
 double getGPA(const int setOfGrades[], size_t tests);
 void enterGrades( int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests);
 char getLetter( double finalGrades);
@@ -21,15 +23,19 @@ void printArray(const int grades[][GRADE_CATEGORIES], size_t pupils, size_t test
 int main(void)
 
 {
+    printf("%s\n", CATEGORIES);
+    for (size_t activites = 0; activites < GRADE_CATEGORIES; ++activites) {
+        printf("Category %d is %.2lf\n", (activites+1), GRADE_CATEGORY_WEIGHT[activites]);
+    }
     double classAverage = 0;
     double finalGrade[GRADE_CATEGORIES] = { 0,0,0,0,0 };
     // initialize student grades for three students (rows)
+    
     int studentGrades[STUDENTS][GRADE_CATEGORIES];
     enterGrades(studentGrades, STUDENTS, GRADE_CATEGORIES);
    
     
     // output array studentGrades
-    puts("The array is:");
     printArray(studentGrades, STUDENTS, GRADE_CATEGORIES);
 
     // calculate average grade for each student
@@ -46,13 +52,13 @@ int main(void)
 void printArray(const int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests)
 {
     // output column heads
-    printf("%s", "                 [0]  [1]  [2]  [3]");
+
 
     // output grades in tabular format
     for (size_t i = 0; i < pupils; ++i) {
 
         // output label for row
-        printf("\nstudentGrades[%u] ", i);
+        printf("\nstudentGrades %u: ", i);
         // output grades for one student
         for (size_t j = 0; j < tests; ++j) {
             printf("%-5d", grades[i][j]);
@@ -69,9 +75,10 @@ void enterGrades(int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests)
         {
             do 
             {
-                printf("Enter value table grades [%d] [%d]\n", row, column);
+                printf("\nEnter grade for each category  for student [%d], category [%d]:", (row+1), (column+1));
                 scanf("%d", &grades[row][column]);
-            } while (grades[row][column] < MIN_GRADE || grades[row][column]> MAX_GRADE);
+            } 
+            while (grades[row][column] < MIN_GRADE || grades[row][column]> MAX_GRADE);
         }
 
     }
