@@ -5,6 +5,8 @@
 #define STUDENTS 4
 #define GRADE_CATEGORIES 5
 #define CATEGORIES "1. Learning Activity 2. Homework 3. Project 4. Midterm 5. Final "
+const unsigned int MIN_GRADE = 0;
+const unsigned int MAX_GRADE = 105;
 const double  A_LETTER = 90;
 const double  B_LETTER = 80;
 const double  C_LETTER = 70;
@@ -14,7 +16,6 @@ double gradeAverage[] = { 0,0,0,0,0 };
 double getGPA(const int setOfGrades[], size_t tests);
 void enterGrades( int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests);
 char getLetter( double finalGrades);
-double average(const int setOfGrades[], size_t tests);
 void printArray(const int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests);
 // function main begins program execution
 int main(void)
@@ -39,22 +40,6 @@ int main(void)
         classAverage += finalGrade[student];
     }
     printf("%s %.1lf", "The class Average is", (classAverage / STUDENTS));
-}
-
-
-
-// Determine the average grade for a particular student
-double average(const int setOfGrades[], size_t tests)
-{
-    int total = 0; // sum of test grades                
-
-    // total all grades for one student                 
-    for (size_t i = 0; i < tests; ++i) {
-       
-        total += setOfGrades[i];
-    }
-
-    return (double)total / tests; // average         
 }
 
 // Print the array
@@ -82,8 +67,11 @@ void enterGrades(int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests)
        
         for (size_t column = 0; column < tests; column++)
         {
-            printf("Enter value table grades [%d] [%d]\n", row, column);
-            scanf("%d", &grades[row][column]);
+            do 
+            {
+                printf("Enter value table grades [%d] [%d]\n", row, column);
+                scanf("%d", &grades[row][column]);
+            } while (grades[row][column] < MIN_GRADE || grades[row][column]> MAX_GRADE);
         }
 
     }
