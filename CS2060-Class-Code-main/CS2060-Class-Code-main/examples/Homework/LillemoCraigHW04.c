@@ -6,6 +6,7 @@
 * Display the grades, then use grade categories which is an array to calculate the final grade, then store the final grades in a 1d array
 * Caluclate and display class average
 * Round all numbers that display to the nearest .1
+* Display letter grade according to student
 */
 #include <stdio.h>
 #define STUDENTS 4
