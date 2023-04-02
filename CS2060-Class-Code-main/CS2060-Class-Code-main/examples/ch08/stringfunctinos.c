@@ -46,7 +46,7 @@ int main(void)
 
 	//numSpace();
 	//letterAnalysis();
-	//wordSize();
+	wordSize();
 	//wordOccurs();
     //memoryFunctions();
 
@@ -56,7 +56,7 @@ int main(void)
 void strcpyEx1(void)
 {
 	char str[] = "ab";
-    char s3[3] = {""};
+    char s3[3] = {"c"};
  
     strcpy(s3, str);
 	printf("Results of strcpy s3: %s \n", s3);
@@ -166,7 +166,7 @@ void numSpace(void)
 
 	// Set pointer to 1st space in buffer
 	// Searching through entire line of text and count the number of spaces
-	bufferPtr = strchr (buffer, ' ');
+	bufferPtr = strchr (buffer, 'a' <= 'z');
 
 	while (bufferPtr != NULL)
 	{
@@ -175,9 +175,8 @@ void numSpace(void)
 		bufferPtr++;
 
 		// Search for next space
-		bufferPtr = strchr (bufferPtr, ' ');
+		bufferPtr = strchr (bufferPtr, 'a' <= 'z');
 	} // while
-
 	printf ("Text entered was - %s\nIt contains %d spaces\n", buffer, numSpaces);
 }
 
@@ -275,11 +274,11 @@ void wordSize(void)
 	for (size_t i = 1; i < WORDLENGTH; ++i)
 	{
 		// if length is not zero
-		if (lengths[i])
-		{
+		//if (lengths[i])
+		//{
 			printf("%llu word%s of length %llu\n",
 			       lengths[i], 1 == lengths[i] ? "" : "s", i);
-		}
+		//}
 	}
 }
 

@@ -9,7 +9,7 @@
 * Display letter grade according to student
 */
 #include <stdio.h>
-#define STUDENTS 4
+#define STUDENTS 80
 #define GRADE_CATEGORIES 5
 #define CATEGORIES "1. Learning Activity 2. Homework 3. Project 4. Midterm 5. Final "
 //if want to change the weights in acordance with each cateogory they follow the trend above
@@ -26,6 +26,9 @@ const double  B_LETTER = 80;
 const double  C_LETTER = 70;
 const double  D_LETTER = 60;
 //function prototypes
+
+void getInfo(char test[]);
+
 //Personal note for Craig (me), it may say prototype, does not mean optinal, always include.
 double getGPA(const int setOfGrades[], size_t tests);
 void enterGrades( int grades[][GRADE_CATEGORIES], size_t pupils, size_t tests);
@@ -37,6 +40,10 @@ int main(void)
 
 {
     //Initalize to restrict
+    char example[STUDENTS];
+    //char example2[STUDENTS];
+    getInfo(example);
+    printf("%s\n", example);
     double classAverage = 0;
     double finalGrade[GRADE_CATEGORIES] = { 0,0,0,0,0 };
     int studentGrades[STUDENTS][GRADE_CATEGORIES];
@@ -144,4 +151,8 @@ char getLetter(const double finalGrades)
             letter = 'D';
         }
     return letter;
+}
+void getInfo(char information[] )
+{
+    scanf("%s", information);
 }
