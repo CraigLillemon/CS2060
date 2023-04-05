@@ -64,8 +64,6 @@ int main(void)
 {
 	company org;
 	getInformation(&org);
-
-
 	initilzeVariables(&org);
 	removeNewLine(org.organization);
 	removeNewLine(org.purpose);
@@ -107,12 +105,9 @@ void getValidGoal(double* goal)
 	{
 		getNumber(&*goal, &*test);
 		double temp = *goal;
-
 		if (temp != '\0')
 		{
-			puts("Please enter a valid goal that is greater than 0 ");
-
-			if (goal > 0)
+			if (*goal > 0)
 			{
 				validAnswer = true;
 			}
@@ -333,6 +328,6 @@ void displayTotalEarned(const struct company* companyPtr)
 {
 	printf("Organization: %s\n", companyPtr->organization);
 	printf("Total amount of donations: %d\n", companyPtr->totalNumberOfDonations);
-	printf("Total amount raised: %.2lf\n", companyPtr->totalAmountRaised);
-	printf("Total amount that paid for credit card processing: %.2lf\n", companyPtr->totalPaidCredit);
+	printf("Total amount raised: $%.2lf\n", companyPtr->totalAmountRaised);
+	printf("Total amount that paid for credit card processing: $%.2lf\n", companyPtr->totalPaidCredit);
 }
