@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
-
+#include <ctype.h>
+#include <time.h>
 #define SIZE 80
 
 typedef struct company
@@ -24,13 +24,18 @@ typedef struct company
 	int totalNumberOfDonations;
 	double totalAmountRaised;
 	double totalPaidCredit;
+
 	char customer[SIZE];
+	char zip[SIZE];
+	char receipt[SIZE];
+	double currentPercent;
+	char quit[SIZE];
 	bool validEnd;
 } company;
 
 void getInformation(struct company* companyPtr);
 void initilzeVariables(struct company* companyPtr);
-double getValidGoal();
+void getValidGoal(double* goal);
 void removeNewLine(char *companyPtr);
 void removeSpace(struct company* companyPtr);
 void createUrl(struct company* companyPtr);
@@ -43,7 +48,17 @@ void getAdmin(struct company* companyPtr);
 void getEmail(char* companyPtr);
 void getPassword(char* companyPtr);
 
-void Verify_Identity(const char* companyPtr, bool* validThing);
+void verify_Identity(const char* companyPtr, bool* validThing);
+
+void getNumber(double* companyPtr, char* quit);
+void donationSum(struct company* companyPtr);
+
+void getZip(struct company* companyPtr);
+void validZip( char* companyPtr, bool* valid);
+void createReceipt(const struct company* companyPtr);
+void displayReceipt(const struct company* companyPtr);
+
+void displayTotalEarned(const struct company* companyPtr);
 
 int main(void)
 {
@@ -56,14 +71,12 @@ int main(void)
 	removeNewLine(org.purpose);
 	removeSpace(&org);
 	createUrl(&org);
-	displayOrganization(&org);
-	getDonation(&org);
-
-
-	//do
-	//{
-//
-	//} while (org.validEnd != true);
+	do
+	{
+		displayOrganization(&org);
+		getDonation(&org);
+	} while (org.validEnd != true);
+	displayTotalEarned(&org);
 }
 
 
@@ -74,34 +87,41 @@ void getInformation(struct company* organizationPtr)
 {
 	puts("Please enter organization name:");
 	fgets(organizationPtr->organization, SIZE, stdin);
+
 	puts("Please enter organization purpose");
 	fgets(organizationPtr->purpose, SIZE, stdin);
-	//puts("Please enter name");
+
 	getName(organizationPtr->name);
-	//fgets(organizationPtr->name, SIZE, stdin);
+
 	getEmail(organizationPtr->email);
 	getPassword(organizationPtr->password);
+
 	puts("Please enter a a valid goal");
-	organizationPtr->goal = getValidGoal();
-	//getValidGoal2(&organizationPtr->goal);
+	getValidGoal(&organizationPtr->goal);
 }
-double getValidGoal()
+void getValidGoal(double* goal)
 {
 	bool validAnswer = false;
-	double temp = 0;
+	char test[SIZE];
 	do
 	{
-		scanf("%lf", &temp);
-		if (temp > 0)
-		{
-			validAnswer = true;
-		}
-		else
+		getNumber(&*goal, &*test);
+		double temp = *goal;
+
+		if (temp != '\0')
 		{
 			puts("Please enter a valid goal that is greater than 0 ");
+
+			if (goal > 0)
+			{
+				validAnswer = true;
+			}
+			else
+			{
+				puts("Please enter a valid goal that is greater than 0 ");
+			}
 		}
 	} while (validAnswer != true);
-	return temp;
 }
 void createUrl(struct company* companyPtr)
 {
@@ -146,7 +166,7 @@ void getPassword(char* companyPtr)
 }
 void displayOrganization(const struct company* companyPtr)
 {
-	printf("%s\n", companyPtr->url);
+	printf("\n%s\n", companyPtr->url);
 	printf("Organization: %s\n", companyPtr->organization);
 	printf("Purpose: %s\n", companyPtr->purpose);
 	printf("Total amount raised: %.2lf\n", companyPtr->totalAmountRaised);
@@ -154,36 +174,26 @@ void displayOrganization(const struct company* companyPtr)
 }
 void getDonation(struct company* companyPtr)
 {
-	char valid_Quit = 'Q';
-	char valid_Lower_Quit = 'q';
 	bool validAnswer = false;
-	double try = 0;
-	puts("Please enter a number greater than 0 for a donation");
 	do 
 	{
-		puts("Test");
-
-	scanf("%lf", &companyPtr->donations);
-	double temp = companyPtr->donations;
-	if (temp == 1 || temp == 'Q')
+		getNumber(&companyPtr->donations, companyPtr->quit);
+		removeNewLine(&*companyPtr->quit);
+	if (strpbrk(companyPtr->quit, "q")||strpbrk(companyPtr->quit, "Q"))
 	{
-
-
 		getAdmin(companyPtr);
 		validAnswer = true;
-
 	}
 	else if (companyPtr->donations > 0)
 	{
 		validAnswer = true;
-		//puts("Test2");
 	}
-	} 
-	while (validAnswer != true);
+	} while (validAnswer != true);
+
 	if (validAnswer == true && companyPtr->validEnd != true)
 	{
-		companyPtr->totalAmountRaised += companyPtr->donations;
-		companyPtr->totalNumberOfDonations++;
+		getZip(companyPtr);
+		createReceipt(companyPtr);
 	}
 }
 void getName(char* companyPtr)
@@ -194,24 +204,32 @@ void getName(char* companyPtr)
 void initilzeVariables(struct company* companyPtr)
 {
 	companyPtr->totalAmountRaised = 0;
+	companyPtr->totalPaidCredit = 0;
 	companyPtr->percentGoal = 0;
 	companyPtr->donations = 0;
 	companyPtr->totalNumberOfDonations = 0;
 	companyPtr->validEnd = false;
+	companyPtr->currentPercent = 0;
 }
 void getAdmin(struct company* companyPtr)
 {
 	bool validEmail = false;
 	bool validPassword = false;
-	Verify_Identity(companyPtr->email, &validEmail);
+	puts("Please enter email");
+	verify_Identity(companyPtr->email, &validEmail);
 	if (validEmail == true)
 	{
-		puts("It works");
+		puts("Please enter Password");
+		verify_Identity(companyPtr->password, &validPassword);
+		if (validPassword == true)
+		{
+			companyPtr->validEnd = true;
+		}
 	}
 }
-void Verify_Identity(const char* companyPtr, bool* validThing)
+void verify_Identity(const char* companyPtr, bool* validThing)
 {
-	int counter = 0;
+	int counter = 1;
 	int test = 0;
 	char tester[SIZE];
 	do
@@ -220,12 +238,101 @@ void Verify_Identity(const char* companyPtr, bool* validThing)
 		if (test == strncmp(companyPtr, tester, strlen(companyPtr)))
 		{
 			*validThing = true;
-			counter = 3;
+			counter = 0;
 		}else
 		{
-			puts("what?");
+			printf("%d chances left\n", counter);
 		}
 	
-		counter++;
-	} while (counter < 3);
+		counter--;
+	} while (counter >= 0);
+	if (*validThing == false)
+	{
+		puts("Going back to donor mode");
+	}
+}
+void getNumber(double* companyPtr, char* quit)
+{
+	char temp[SIZE];
+	char* ptr;
+	puts("Please enter number");
+	fgets(temp, SIZE, stdin);
+	*companyPtr = strtod(temp, &ptr);
+	strncpy(quit, ptr, sizeof(&ptr));
+}
+void donationSum(struct company* companyPtr)
+{
+	double processFee = 0.029;
+	double temp = companyPtr->donations * processFee;
+	double temp2 = companyPtr->donations - temp;
+	companyPtr->totalPaidCredit += temp;
+	companyPtr->totalAmountRaised += temp2;
+	companyPtr->percentGoal = (companyPtr->totalAmountRaised / companyPtr->goal)*100;
+	companyPtr->totalNumberOfDonations++;
+	printf("\nThank you for the donation the there is a %.2lf%% credit card fee of $%.2lf. $%.2lf will be donated\n", (processFee * 100), companyPtr->donations, temp2);
+}
+void getZip(struct company* companyPtr)
+{
+	bool valid = false;
+	do
+	{
+		puts("Enter Zip");
+		fgets(companyPtr->zip, SIZE, stdin);
+		removeNewLine(companyPtr->zip);
+		validZip(companyPtr->zip, &valid);
+	} while (valid != true);
+	donationSum(companyPtr);
+}
+void validZip(char* companyPtr, bool* valid)
+{
+	int temp = strlen(companyPtr);
+	if(isdigit(*companyPtr))
+	{
+		if (temp == 5)
+		{
+			if (companyPtr[0] != '0')
+			{
+				*valid = true;
+			}
+		}
+	}
+}
+void createReceipt(const struct company* companyPtr)
+{
+	bool validChoice = false;
+	char temp[SIZE];
+	do 
+	{
+		puts("Do you want a receipt, (y)es or (n)o ? ");
+		fgets(temp, SIZE, stdin);
+		removeNewLine(&*temp);
+		if (strpbrk(temp, "y") || strpbrk(temp, "Y"))
+		{
+			displayReceipt(companyPtr);
+			validChoice = true;
+		}
+		else if (strpbrk(temp, "n") || strpbrk(temp, "N"))
+		{
+			validChoice = true;
+		}
+		else
+		{
+			puts("Please enter y/n or Y/N");
+		}
+	} while (validChoice != true);
+}
+void displayReceipt(const struct company* companyPtr)
+{
+	time_t curtime;
+	time(&curtime);
+	printf("Organization: %s\n", companyPtr->organization);
+	printf("Donation Amount: $%.2lf\n", companyPtr->donations);
+	printf("%s\n", ctime(&curtime));
+}
+void displayTotalEarned(const struct company* companyPtr)
+{
+	printf("Organization: %s\n", companyPtr->organization);
+	printf("Total amount of donations: %d\n", companyPtr->totalNumberOfDonations);
+	printf("Total amount raised: %.2lf\n", companyPtr->totalAmountRaised);
+	printf("Total amount that paid for credit card processing: %.2lf\n", companyPtr->totalPaidCredit);
 }
