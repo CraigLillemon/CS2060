@@ -33,7 +33,7 @@ typedef struct company
 	double goal;
 	double percentGoal;
 	double donations;
-	int totalNumberOfDonations;
+	unsigned int totalNumberOfDonations;
 	double totalAmountRaised;
 	double totalPaidCredit;
 	//Customer info
@@ -374,8 +374,6 @@ void verify_Identity(const char* companyPtr, bool* validThing)
 		puts("Going back to donor mode");
 	}
 }
-
-
 void displayTotalEarned(const struct company* companyPtr)
 {
 	//displays total of everything
