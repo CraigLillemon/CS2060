@@ -9,8 +9,8 @@ if success display all according information of total raised, and number of peop
 */
 #include <stdio.h>
 #include <errno.h>
-#include <limits.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -44,6 +44,8 @@ typedef struct company
 	//To end program info 
 	char quit[SIZE];
 	bool validEnd;
+	//Linked lists
+	struct company* nextPtr;
 } company;
 
 void getInformation(struct company* companyPtr);
@@ -52,10 +54,10 @@ void getValidGoal(double* goal);
 void removeNewLine(char *companyPtr);
 void removeSpace(struct company* companyPtr);
 void createUrl(struct company* companyPtr);
-void displayOrganization(const struct company* companyPtr);
+void displayOrganization(company* companyPtr);
 void getName(char* companyPtr);
-void getDonation(struct company* companyPtr);
-void getAdmin(struct company* companyPtr);
+void getDonation(struct company* companyPtr, bool* validEnd);
+void getAdmin(struct company* companyPtr, bool* validEnd);
 
 
 void getEmail(char* companyPtr);
@@ -72,23 +74,33 @@ void createReceipt(const struct company* companyPtr);
 void displayReceipt(const struct company* companyPtr);
 
 void displayTotalEarned(const struct company* companyPtr);
+char validateYesNo();
 
+void insertOrganization(company** organization);
+void selectOrganization(company** organization, bool* validEnd);
 int main(void)
 {
-	company org;
-	getInformation(&org);
-	initilzeVariables(&org);
-	//Could put these in getinformation 
-	removeNewLine(org.organization);
-	removeNewLine(org.purpose);
-	removeSpace(&org);
-	createUrl(&org);
+	char yesOrNo;
+	bool validEnd = false;
+	company* org = NULL;
 	do
 	{
-		displayOrganization(&org);
-		getDonation(&org);
-	} while (org.validEnd != true);
-	displayTotalEarned(&org);
+
+		insertOrganization(&org);
+		
+
+		// why does insert node pass the address of head pointer but print list does not?
+
+		printf("%s", "\nDo you want to add another Organization? ");
+		 yesOrNo = validateYesNo();
+	} while (yesOrNo == 'y');
+	//Could put these in getinformation 
+	do
+	{
+		selectOrganization(&org, &validEnd);
+	} while (validEnd != true);
+	//selectOrganization(&org);
+	//displayTotalEarned(&org);
 }
 
 
@@ -191,17 +203,33 @@ void initilzeVariables(struct company* companyPtr)
 	companyPtr->currentPercent = 0;
 }
 //Part 2 get customer information and 
-void displayOrganization(const struct company* companyPtr)
+void displayOrganization(company* companyPtr)
 {
 	
-	printf("\n%s\n", companyPtr->url);
-	printf("Organization: %s\n", companyPtr->organization);
-	printf("Purpose: %s\n", companyPtr->purpose);
-	//Prints information that may be changed
-	printf("Total amount raised: %.2lf\n", companyPtr->totalAmountRaised);
-	printf("We are %.2lf%% towards our goal of $%.2lf\n", companyPtr->percentGoal, companyPtr->goal);
+	if (companyPtr != NULL)
+	{
+		
+		company* currentPtr = companyPtr;
+
+		
+		while (currentPtr != NULL)
+		{
+			printf("\n%s\n", currentPtr->url);
+			printf("Organization: %s\n", currentPtr->organization);
+			printf("Purpose: %s\n", currentPtr->purpose);
+			//Prints information that may be changed
+			printf("Total amount raised: %.2lf\n", currentPtr->totalAmountRaised);
+			printf("We are %.2lf%% towards our goal of $%.2lf\n", currentPtr->percentGoal, currentPtr->goal);
+			currentPtr = currentPtr->nextPtr;
+		}
+	}
+	
+	else
+	{
+		puts("List is empty");
+	}
 }
-void getDonation(struct company* companyPtr)
+void getDonation(struct company* companyPtr, bool *validEnd)
 {
 	//Checks to see if a valid number was entered
 	bool validAnswer = false;
@@ -215,7 +243,7 @@ void getDonation(struct company* companyPtr)
 	if (strpbrk(companyPtr->quit, "q")||strpbrk(companyPtr->quit, "Q"))
 	{
 		//if entered will go admin mode, to see if email and password match, and that if fails will repeat the donor mode
-		getAdmin(companyPtr);
+		getAdmin(companyPtr, &*validEnd);
 		validAnswer = true;
 	}
 	//Ensures that the value is proper
@@ -225,7 +253,7 @@ void getDonation(struct company* companyPtr)
 	}
 	} while (validAnswer != true);
 	//If number was entered and not character q will perform customer functions and additions
-	if (validAnswer == true && companyPtr->validEnd != true)
+	if (validAnswer == true && *validEnd != true)
 	{
 		//gets name with standerd fgets
 		getName(companyPtr->customer);
@@ -325,7 +353,7 @@ void displayReceipt(const struct company* companyPtr)
 	printf("%s\n", ctime(&curtime));
 }
 //Part 3 Admin mode, and display total
-void getAdmin(struct company* companyPtr)
+void getAdmin(struct company* companyPtr, bool* validEnd)
 {
 	bool validEmail = false;
 	bool validPassword = false;
@@ -341,7 +369,7 @@ void getAdmin(struct company* companyPtr)
 		if (validPassword == true)
 		{
 			//both have to be true in order for prog to end if not it goes back to donor mode
-			companyPtr->validEnd = true;
+			*validEnd = true;
 		}
 	}
 }
@@ -412,4 +440,90 @@ void getNumber(double* companyPtr, char* quit)
 	*companyPtr = strtod(temp, &ptr);
 	//makes sure that quit stores the characters
 	strncpy(quit, ptr, sizeof(&ptr));
+}
+char validateYesNo() {
+	char validYesNo;
+
+	do {
+		puts("Please enter (y)es or (n)o:");
+		validYesNo = getchar();
+		while (getchar() != '\n');
+
+		validYesNo = tolower(validYesNo);
+
+	} while (validYesNo != 'y' && validYesNo != 'n');
+
+	return  validYesNo;
+}
+void insertOrganization(company** organization)
+{
+	company *org = malloc(sizeof(company));
+	if (org != NULL)
+	{
+		getInformation(&*org);
+		initilzeVariables(&*org);
+		removeNewLine(org->organization);
+		removeNewLine(org->purpose);
+		removeSpace(&*org);
+		createUrl(&*org);
+		org->nextPtr = NULL;
+		company *currentPtr = *organization;
+		company *previousPtr = NULL;
+		int temp = 0;
+		while ((currentPtr != NULL) && temp < strncmp(currentPtr->organization, currentPtr->organization, SIZE))
+		{
+			previousPtr = currentPtr;
+			currentPtr = currentPtr->nextPtr;
+		}
+		if (previousPtr == NULL)
+		{
+			*organization = org;
+		}
+		else
+		{
+			previousPtr->nextPtr = org;
+		}
+		org->nextPtr = currentPtr;
+	}
+}
+void selectOrganization(company** organization, bool *validEnd)
+{
+	company* previousPtr = NULL;
+	company* currentPtr = *organization;
+	char temp[SIZE];
+	bool valid = false;
+	displayOrganization(&**organization);
+	do 
+	{
+		puts("Please chose organization");
+		fgets(temp, SIZE, stdin);
+		removeNewLine(&*temp);
+		if (*organization != NULL)
+		{
+			if (strncmp(temp, (*organization)->organization, SIZE) == 0)
+			{
+				
+				getDonation(&*currentPtr, &*validEnd);
+				valid = true;
+				
+			}
+			else
+			{
+				while (currentPtr != NULL && strncmp(temp, (*organization)->organization, SIZE) != 1)
+				{
+					previousPtr = currentPtr;
+					currentPtr = currentPtr->nextPtr;
+					
+				}
+				if (currentPtr != NULL)
+				{
+					previousPtr->nextPtr = currentPtr->nextPtr;
+					getDonation(&*currentPtr, &*validEnd);
+					valid = true;
+					
+				}
+			}
+			//temp, (*organization)->organization, SIZE
+		} 
+	} while (valid != true);
 }
